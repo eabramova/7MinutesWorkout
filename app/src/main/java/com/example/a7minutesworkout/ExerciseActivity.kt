@@ -1,9 +1,7 @@
 package com.example.a7minutesworkout
 
 import android.app.Dialog
-import android.app.PendingIntent.getActivity
 import android.content.Intent
-import android.content.IntentSender.OnFinished
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -12,7 +10,6 @@ import android.os.CountDownTimer
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a7minutesworkout.databinding.ActivityExerciseBinding
 import com.example.a7minutesworkout.databinding.DialogCustomBackConfirmationBinding
@@ -55,7 +52,6 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         tts = TextToSpeech(this, this)
 
-
 //        binding?.flProgressBar?.visibility = View.INVISIBLE
         setupRestView()
         setupExerciseStatusRecyclerView()
@@ -67,20 +63,20 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         customDialog.setContentView(dialogBinding.root)
         customDialog.setCanceledOnTouchOutside(false)
         dialogBinding.btnYes.setOnClickListener {
+
             this@ExerciseActivity.finish()
             customDialog.dismiss()
         }
         dialogBinding.btnNo.setOnClickListener {
             customDialog.dismiss()
-
         }
         customDialog.show()
-
     }
 
     override fun onBackPressed() {
         customDialogForBackButton()
     }
+
 
     private fun setupExerciseStatusRecyclerView() {
         binding?.rvExerciseStatus?.layoutManager =
@@ -213,11 +209,17 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     public override fun onDestroy() {
+
+        if (exerciseTimer != null) {
+            exerciseTimer?.cancel()
+            exerciseProgress = 0
+        }
+
         if (restTimer != null) {
             restTimer?.cancel()
             restProgress = 0
         }
-        super.onDestroy()
+
         //shutting down text to speech feature when activity is destroyed
         if (tts != null) {
             tts!!.stop()
@@ -228,7 +230,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             player!!.stop()
         }
         binding = null
-
+        super.onDestroy()
 
     }
 
